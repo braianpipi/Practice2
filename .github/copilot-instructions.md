@@ -2,7 +2,7 @@
 - Project name: Practice2
 - Unity version: Unity 2022.3.42f1
 - Active game object:
-  - Name: Tabs
+  - Name: UIManager
   - Tag: Untagged
-  - Layer: UI
+  - Layer: Default
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

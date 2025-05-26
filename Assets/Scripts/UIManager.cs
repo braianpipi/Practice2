@@ -11,6 +11,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas interactionCanvas; //serializeField permite editar un atributo privado desde el inspector de unity / aca tengo el canvas
     [SerializeField] private TMP_Text objectNameText; //Aca tengo el nombre del objeto 
 
+    [Header("Slider Colores")]
+    [SerializeField] private Slider rSlider, gSlider, bSlider;
+    [SerializeField] private TMP_Text rValueText, gValueText, bValueText;
+
+
     private ObjetoInteractuable currentObject;
     public bool isUIOpen { get; private set; } = false; // Esto para que el canvas se abra y obligo a cerrarla para que pueda interactuar con otro objeto
 
@@ -40,7 +45,32 @@ public class UIManager : MonoBehaviour
         interactionCanvas.gameObject.SetActive(true);
         isUIOpen = true;
 
+
+        //Mostrando info nombre
         objectNameText.text = "Interactuando con : " + target.objectName;
+
+        //Cambio de colores
+
+        Material mat = target.GetMaterialInstance();
+        if (mat != null) 
+        {
+            Color currentColor = mat.color;
+
+            rSlider.SetValueWithoutNotify(currentColor.r);
+            gSlider.SetValueWithoutNotify(currentColor.g);
+            bSlider.SetValueWithoutNotify(currentColor.b);
+
+            //Mostrar los valores de RGB en texto en pantalla (0-250)
+
+            rValueText.text = Mathf.RoundToInt(currentColor.r * 255).ToString();
+            gValueText.text = Mathf.RoundToInt(currentColor.g * 255).ToString();
+            bValueText.text = Mathf.RoundToInt(currentColor.b * 255).ToString();
+
+        }
+           
+
+
+
 
 
     }
@@ -52,6 +82,23 @@ public class UIManager : MonoBehaviour
 
         objectNameText.text = "";
         currentObject = null;
+    }
+
+    public void onSliderValueChanged()
+    {
+        if (currentObject == null) return;
+
+        Color newColor = new Color(rSlider.value, gSlider.value, bSlider.value);
+
+        Renderer rend = currentObject.GetComponent<Renderer>();
+
+        if (rend != null) 
+        {
+            rend.material.color = newColor;
+        }
+        rValueText.text = Mathf.RoundToInt(rSlider.value * 255).ToString();
+        gValueText.text = Mathf.RoundToInt(gSlider.value * 255).ToString();
+        bValueText.text = Mathf.RoundToInt(bSlider.value * 255).ToString();
     }
 }
 
