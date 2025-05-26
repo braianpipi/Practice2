@@ -54,3 +54,9 @@ public class UIManager : MonoBehaviour
         currentObject = null;
     }
 }
+
+//ASSETS DESCARGADOS PARA UI
+//Simple Pie Menu | Radial Menu Asset
+//Easy UI Panel Manager
+//Sleek essential UI pack
+//Dark Theme UI
