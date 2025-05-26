@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance { get; private set;}
+    public static UIManager Instance { get; private set; }
     // el header es para la interfa
     [Header("UI")] //
     [SerializeField] private Canvas interactionCanvas; //serializeField permite editar un atributo privado desde el inspector de unity / aca tengo el canvas
@@ -47,38 +47,32 @@ public class UIManager : MonoBehaviour
 
 
         //Mostrando info nombre
-        objectNameText.text = "Interactuando con : " + target.objectName;
+        // objectNameText.text = "Interactuando con : " + target.objectName;
 
         //Cambio de colores
 
-        Material mat = target.GetMaterialInstance();
-        if (mat != null) 
-        {
-            Color currentColor = mat.color;
+        //    Material mat = target.GetMaterialInstance();
+        //    if (mat != null)
+        //    {
+        //        Color currentColor = mat.color;
 
-            rSlider.SetValueWithoutNotify(currentColor.r);
-            gSlider.SetValueWithoutNotify(currentColor.g);
-            bSlider.SetValueWithoutNotify(currentColor.b);
+        //        rSlider.SetValueWithoutNotify(currentColor.r);
+        //        gSlider.SetValueWithoutNotify(currentColor.g);
+        //        bSlider.SetValueWithoutNotify(currentColor.b);
 
-            //Mostrar los valores de RGB en texto en pantalla (0-250)
+        //        //Mostrar los valores de RGB en texto en pantalla (0-250)
 
-            rValueText.text = Mathf.RoundToInt(currentColor.r * 255).ToString();
-            gValueText.text = Mathf.RoundToInt(currentColor.g * 255).ToString();
-            bValueText.text = Mathf.RoundToInt(currentColor.b * 255).ToString();
+        //        rValueText.text = Mathf.RoundToInt(currentColor.r * 255).ToString();
+        //        gValueText.text = Mathf.RoundToInt(currentColor.g * 255).ToString();
+        //        bValueText.text = Mathf.RoundToInt(currentColor.b * 255).ToString();
 
-        }
-           
-
-
-
-
-
+        //    }
     }
 
     public void HideInteractionCanvas()
     {
         interactionCanvas.gameObject.SetActive(false);
-        isUIOpen=false;
+        isUIOpen = false;
 
         objectNameText.text = "";
         currentObject = null;
@@ -92,7 +86,7 @@ public class UIManager : MonoBehaviour
 
         Renderer rend = currentObject.GetComponent<Renderer>();
 
-        if (rend != null) 
+        if (rend != null)
         {
             rend.material.color = newColor;
         }
@@ -100,10 +94,28 @@ public class UIManager : MonoBehaviour
         gValueText.text = Mathf.RoundToInt(gSlider.value * 255).ToString();
         bValueText.text = Mathf.RoundToInt(bSlider.value * 255).ToString();
     }
+
+
+    //public void NextObject()
+    //{
+    //    if (currentObject != null)
+    //    {
+    //        currentObject.CambiarObjeto(1);
+    //    }
+    //}
+
+    public void SiguienteObjeto() => currentObject?.CambiarObjeto(1);
+
+    public void AnteriorObjeto() => currentObject?.CambiarObjeto(-1);
+
 }
+
+
+
 
 //ASSETS DESCARGADOS PARA UI
 //Simple Pie Menu | Radial Menu Asset
 //Easy UI Panel Manager
 //Sleek essential UI pack
 //Dark Theme UI
+//Interior House Assets | URP
