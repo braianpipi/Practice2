@@ -16,7 +16,9 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        //mobile input para tocar los toques de la pantalla
+        if (UIManager.Instance.isUIOpen)
+            return;
+            //mobile input para tocar los toques de la pantalla
         if(Input.touchCount > 0)
         {
             //Guardo el primer toque en una variable

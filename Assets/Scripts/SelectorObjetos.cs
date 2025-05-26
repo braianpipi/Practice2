@@ -24,8 +24,10 @@ public class SelectorObjetos : MonoBehaviour
 
     void Update()
     {
+        if (UIManager.Instance.isUIOpen)
+            return;
         //Detecto si toque la pantalla
-        if(Input.touchCount > 0)
+        if (Input.touchCount > 0)
         {
             //guardo el primer toque 
             Touch touch = Input.GetTouch(0);
@@ -50,47 +52,66 @@ public class SelectorObjetos : MonoBehaviour
             }
 
         }
+        //PC INPUT
 
-        void StartHoldDetection(Vector2 pos)
+        if (Input.GetMouseButtonDown(0)) //HAGO CLICK
         {
-            startTouchPosition = pos; //El lugar donde hice click en la pantalla
-            holdTimer = 0f; //Resetea el temporizador que si llega a un segundo abre el menu ui;
-            isHolding = true; //esto es para si lo estoy manteniendo;
+            StartHoldDetection(Input.mousePosition);
+        }
+        else if (Input.GetMouseButton(0)) //MANTENGO APRETADO
+        {
+            CheckHoldMovement(Input.mousePosition);
+            UpdateHoldTimer(Input.mousePosition);
+        }
+        else if (Input.GetMouseButtonUp(0))//Suelto el click
+        {
+            isHolding = false;
+        }
+    }
+    void StartHoldDetection(Vector2 pos)
+    {
+        startTouchPosition = pos; //El lugar donde hice click en la pantalla
+        holdTimer = 0f; //Resetea el temporizador que si llega a un segundo abre el menu ui;
+        isHolding = true; //esto es para si lo estoy manteniendo;
+    }
+
+    void CheckHoldMovement(Vector2 pos)
+    {
+        if (Vector2.Distance(startTouchPosition, pos) > maxHoldMovement)
+        {
+            isHolding = false;//Cancela la rececpcion del dedo si arrastra muy lejos del objeto.
+
         }
 
-        void CheckHoldMovement(Vector2 pos)
+    }
+    void DetectarObjeto(Vector2 screenPos)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(screenPos);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100f, interactableLayer))
         {
-            if(Vector2.Distance(startTouchPosition, pos) > maxHoldMovement)
+            //Debug.Log("Objeto interactuable : "+ hit.transform.gameObject.name);
+            ObjetoInteractuable objeto = hit.collider.GetComponent<ObjetoInteractuable>();
+            //Crea un rayo y donde colisione vas a obtener el objeto interactuable que vas a tener.
+
+            if (objeto != null)
             {
-                isHolding = false;//Cancela la rececpcion del dedo si arrastra muy lejos del objeto.
-
-            }
-
-        }
-
-        //Actualiza el temporizador si mantenemos apretado el dedo sobre un objeto
-        void UpdateHoldTimer(Vector2 pos)
-        {
-            if (!isHolding) return;
-            //Contador de tiempo
-            holdTimer += Time.deltaTime; 
-
-            if(holdTimer >= holdTimeFreshold)
-            {
-                DetectarObjeto(pos);
-                isHolding = false;
+                objeto.Interactuar();
             }
         }
+    }
+    //Actualiza el temporizador si mantenemos apretado el dedo sobre un objeto
+    void UpdateHoldTimer(Vector2 pos)
+    {
+        if (!isHolding) return;
+        //Contador de tiempo
+        holdTimer += Time.deltaTime;
 
-        void DetectarObjeto(Vector2 screenPos)
+        if (holdTimer >= holdTimeFreshold)
         {
-            Ray ray = Camera.main.ScreenPointToRay(screenPos);
-            RaycastHit hit; 
-
-            if(Physics.Raycast(ray, out hit, 100f, interactableLayer))
-            {
-                Debug.Log("Objeto interactuable : "+ hit.transform.gameObject.name);
-            }
+            DetectarObjeto(pos);
+            isHolding = false;
         }
     }
 }
