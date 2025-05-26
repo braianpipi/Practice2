@@ -50,9 +50,10 @@ public class ObjetoInteractuable : MonoBehaviour
 
     //Materiales
     [HideInInspector] public GameObject currentInstance;
-    [HideInInspector] public Material[] currenteMaterials;
+    [HideInInspector] public Material[] currentMaterials;
     [HideInInspector] public List<Material> editableMaterials = new List<Material>();
 
+    public Vector3 offset;
 
     public Transform spawnPoint; //Punto donde aparecen los objetos
 
@@ -88,13 +89,58 @@ public class ObjetoInteractuable : MonoBehaviour
     {
         if (spawnPoint == null) return;
         //Destruir instancia anterior
-        if(currentInstance != null)
+        if (currentInstance != null)
             Destroy(currentInstance);
 
         //Instanciar un nuevo objeto
         objSO obj = objetos[currentIndex];
         currentInstance = Instantiate(obj.prefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
 
+
+        Renderer rend = currentInstance.GetComponent<Renderer>();
+
+        if (rend != null)
+        {
+            currentObjectSelected = objetos[currentIndex];
+            //Clonar los materiales del objeto instanciado
+            Material[] originalMats = rend.sharedMaterials;
+            currentMaterials = new Material[originalMats.Length];
+            //Estoy guardando todos los mateariles del objeto que estoy spawneando los estoy guardando para volvera utilizar, una vez guardado 
+
+            for(int i=0; i< originalMats.Length; i++)
+            {
+                if(originalMats[i] != null)
+                {
+                //Clonando los materiales originales y los guardo 
+                currentMaterials[i] = new Material(originalMats[i]);
+                }else
+                {
+                    currentMaterials[i] = null;    //No tiene materiales originales
+                }
+            }
+
+            //Guardar referencia a los materiales originales
+            rend.materials = currentMaterials;
+            //Esto es todo los materiales que sean editables los voy a borrar porque los quiero editar desde cero;
+            editableMaterials.Clear();
+
+            if (currentObjectSelected.customMaterialsToEdit != null && currentObjectSelected.customMaterialsToEdit.Count > 0) 
+            {
+                foreach(Material matToEdit in currentObjectSelected.customMaterialsToEdit)
+                {
+                    foreach( Material clonado in currentMaterials)
+                    {
+                        if (clonado.name.StartsWith(matToEdit.name))
+                        {
+                            editableMaterials.Add(clonado);
+                        }
+                    }
+                }
+            }else
+            {
+                editableMaterials.AddRange(currentMaterials);
+            }
+        }
     }
 
     public void Interactuar()

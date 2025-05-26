@@ -23,8 +23,14 @@ public class UIManager : MonoBehaviour
     void Awake()
     {
         Singleton();
+
+        rSlider.onValueChanged.AddListener(OnSliderValueChanged);
+        gSlider.onValueChanged.AddListener(OnSliderValueChanged);
+        bSlider.onValueChanged.AddListener(OnSliderValueChanged);
         //Esto es para desactivarlo apenas inicia
         interactionCanvas.gameObject.SetActive(false);
+
+
     }
 
     void Singleton()
@@ -67,6 +73,22 @@ public class UIManager : MonoBehaviour
         //        bValueText.text = Mathf.RoundToInt(currentColor.b * 255).ToString();
 
         //    }
+        //Cambio de colores
+
+        if (currentObject.editableMaterials != null && currentObject.editableMaterials.Count > 0)
+        {
+            Color currentColor = currentObject.editableMaterials[0].color;
+            
+                rSlider.SetValueWithoutNotify(currentColor.r);
+                gSlider.SetValueWithoutNotify(currentColor.g);
+                bSlider.SetValueWithoutNotify(currentColor.b);
+
+                //Mostrar los valores de RGB en texto en pantalla (0-250)
+
+                rValueText.text = Mathf.RoundToInt(currentColor.r * 255).ToString();
+                gValueText.text = Mathf.RoundToInt(currentColor.g * 255).ToString();
+                bValueText.text = Mathf.RoundToInt(currentColor.b * 255).ToString();
+        }
     }
 
     public void HideInteractionCanvas()
@@ -78,21 +100,33 @@ public class UIManager : MonoBehaviour
         currentObject = null;
     }
 
-    public void onSliderValueChanged()
+    public void OnSliderValueChanged(float value)
     {
-        if (currentObject == null) return;
+        if (currentObject == null || currentObject.currentMaterials == null) return;
 
         Color newColor = new Color(rSlider.value, gSlider.value, bSlider.value);
 
-        Renderer rend = currentObject.GetComponent<Renderer>();
-
-        if (rend != null)
+        foreach(Material mat in currentObject.editableMaterials)
         {
-            rend.material.color = newColor;
+            if(mat != null)
+            {
+                mat.color = newColor;
+            }
         }
-        rValueText.text = Mathf.RoundToInt(rSlider.value * 255).ToString();
-        gValueText.text = Mathf.RoundToInt(gSlider.value * 255).ToString();
-        bValueText.text = Mathf.RoundToInt(bSlider.value * 255).ToString();
+
+        //if (currentObject == null) return;
+
+        //Color newColor = new Color(rSlider.value, gSlider.value, bSlider.value);
+
+        //Renderer rend = currentObject.GetComponent<Renderer>();
+
+        //if (rend != null)
+        //{
+        //    rend.material.color = newColor;
+        //}
+        //rValueText.text = Mathf.RoundToInt(rSlider.value * 255).ToString();
+        //gValueText.text = Mathf.RoundToInt(gSlider.value * 255).ToString();
+        //bValueText.text = Mathf.RoundToInt(bSlider.value * 255).ToString();
     }
 
 
