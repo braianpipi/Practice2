@@ -125,6 +125,7 @@ public class UIManager : MonoBehaviour
 
     public void OnSliderValueChanged(float value)
     {
+        //SoundManager.instance.PlaySound(SoundType.BUTTON_HOVER);
         if (currentObject == null || currentObject.currentMaterials == null) return;
 
         Color newColor = new Color(rSlider.value, gSlider.value, bSlider.value);
@@ -161,12 +162,46 @@ public class UIManager : MonoBehaviour
     //    }
     //}
 
-    public void SiguienteObjeto() => currentObject?.CambiarObjeto(1);
-
-    public void AnteriorObjeto() => currentObject?.CambiarObjeto(-1);
-
-    public void OnNextTextureClicked() => currentObject?.NextTexture();
-    public void OnPreviousTextureClicked() => currentObject?.PreviousTexture();
+    //public void SiguienteObjeto() => currentObject?.CambiarObjeto(1);
+    public void SiguienteObjeto()
+    {
+        if(currentObject != null)
+        {
+            currentObject.CambiarObjeto(1);
+            SoundManager.instance.PlaySound(SoundType.BUTTON_CLICK, 2.0f);
+        }
+    }
+   // public void AnteriorObjeto() => currentObject?.CambiarObjeto(-1);
+   public void AnteriorObjeto()
+    {
+        {
+            if (currentObject != null)
+            {
+                currentObject.CambiarObjeto(-1);
+                SoundManager.instance.PlaySound(SoundType.BUTTON_CLICK, 2.0f);
+            }
+        }
+    }
+    //public void OnNextTextureClicked() => currentObject?.NextTexture();
+    public void OnNextTextureClicked()
+    {
+        if (currentObject != null)
+        {
+            currentObject.NextTexture();
+            SoundManager.instance.PlaySound(SoundType.BUTTON_CLICK, 2.0f);
+        }
+    }
+    //public void OnPreviousTextureClicked() => currentObject?.PreviousTexture();
+    public void OnPreviousTextureClicked()
+    {
+        {
+            if (currentObject != null)
+            {
+                currentObject.PreviousTexture();
+                SoundManager.instance.PlaySound(SoundType.BUTTON_CLICK, 2.0f);
+            }
+        }
+    }
 }
 
 
