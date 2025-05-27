@@ -46,7 +46,7 @@ public class ObjetoInteractuable : MonoBehaviour
     [Header("Seteado de Objetos")]
     public objSO[] objetos;//Lista de objetos scriptable
 
-    private int currentIndex = 0;
+    public int currentIndex = 0;
 
     //Materiales
     [HideInInspector] public GameObject currentInstance;
@@ -58,6 +58,8 @@ public class ObjetoInteractuable : MonoBehaviour
     public Transform spawnPoint; //Punto donde aparecen los objetos
 
     private objSO currentObjectSelected;
+
+    private int currentTextureIndex = 0;
 
     public void Start()
     {
@@ -101,7 +103,8 @@ public class ObjetoInteractuable : MonoBehaviour
 
         if (rend != null)
         {
-            currentObjectSelected = objetos[currentIndex];
+            //currentObjectSelected = objetos[currentIndex];
+            currentObjectSelected = obj;
             //Clonar los materiales del objeto instanciado
             Material[] originalMats = rend.sharedMaterials;
             currentMaterials = new Material[originalMats.Length];
@@ -109,14 +112,15 @@ public class ObjetoInteractuable : MonoBehaviour
 
             for(int i=0; i< originalMats.Length; i++)
             {
-                if(originalMats[i] != null)
-                {
-                //Clonando los materiales originales y los guardo 
-                currentMaterials[i] = new Material(originalMats[i]);
-                }else
-                {
-                    currentMaterials[i] = null;    //No tiene materiales originales
-                }
+                currentMaterials[i] = originalMats[i] != null ? new Material(originalMats[i]) : null;
+                //if(originalMats[i] != null)
+                //{
+                ////Clonando los materiales originales y los guardo 
+                //currentMaterials[i] = new Material(originalMats[i]);
+                //}else
+                //{
+                //    currentMaterials[i] = null;    //No tiene materiales originales
+                //}
             }
 
             //Guardar referencia a los materiales originales
@@ -141,6 +145,19 @@ public class ObjetoInteractuable : MonoBehaviour
                 editableMaterials.AddRange(currentMaterials);
             }
         }
+    
+        //SISTEMA DE TEXTURAS
+        if(currentObjectSelected.isTextured && currentObjectSelected.texturedMaterial != null && currentObjectSelected.availableTextures.Count > 0)
+        {
+            foreach(Material mat in currentMaterials)
+            {
+                if (mat != null && mat.name.StartsWith(currentObjectSelected.texturedMaterial.name))
+                {
+                    mat.mainTexture = currentObjectSelected.availableTextures[0];
+                    break;
+                }
+            }
+        }
     }
 
     public void Interactuar()
@@ -148,4 +165,71 @@ public class ObjetoInteractuable : MonoBehaviour
       //  Debug.Log("Interactuar");
       UIManager.Instance.ShowInteractionCanvas(this);
     }
+
+    public void SetTexture(int textureIndex)
+    {
+        if (!currentObjectSelected.isTextured ||
+            currentObjectSelected.availableTextures == null ||
+            textureIndex < 0 ||
+            textureIndex >= currentObjectSelected.availableTextures.Count)
+        {
+            return; 
+        }
+
+        currentTextureIndex = textureIndex;
+        ApplyTextureToTexturedMaterial();
+        
+    }
+
+    public void NextTexture()
+    {
+        if (!currentObjectSelected.isTextured ||
+            currentObjectSelected.availableTextures == null ||
+            currentObjectSelected.availableTextures.Count == 0)
+            return;
+        currentTextureIndex++;
+        if(currentTextureIndex >= currentObjectSelected.availableTextures.Count)
+        {
+            currentTextureIndex = 0;
+        }
+        ApplyTextureToTexturedMaterial();
+    }
+
+    public void PreviousTexture()
+    {
+        if (!currentObjectSelected.isTextured ||
+            currentObjectSelected.availableTextures == null ||
+            currentObjectSelected.availableTextures.Count == 0)
+            return;
+        currentTextureIndex--;
+        if (currentTextureIndex <0)
+        {
+            currentTextureIndex = currentObjectSelected.availableTextures.Count -1;
+        }
+        ApplyTextureToTexturedMaterial();
+
+    }
+    void ApplyTextureToTexturedMaterial()
+    {
+        if (!currentObjectSelected.isTextured ||
+            currentObjectSelected.availableTextures == null ||
+            currentObjectSelected.availableTextures.Count == 0 ||
+            currentObjectSelected.texturedMaterial == null)
+        {
+            return;
+        }
+
+        foreach (Material mat in currentMaterials)
+        {
+            if (mat != null && mat.name.StartsWith(currentObjectSelected.texturedMaterial.name))
+            {
+                mat.mainTexture = currentObjectSelected.availableTextures[currentTextureIndex];
+                break;
+            }
+        }
+
+    }
+
+
 }
+

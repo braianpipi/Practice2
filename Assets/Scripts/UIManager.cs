@@ -11,6 +11,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Canvas interactionCanvas; //serializeField permite editar un atributo privado desde el inspector de unity / aca tengo el canvas
     [SerializeField] private TMP_Text objectNameText; //Aca tengo el nombre del objeto 
 
+    [Header("UI Panels")]
+    [SerializeField] private GameObject textureNavigationPanel;
+    [SerializeField] private GameObject meshesNavigaationPanel;
+
     [Header("Slider Colores")]
     [SerializeField] private Slider rSlider, gSlider, bSlider;
     [SerializeField] private TMP_Text rValueText, gValueText, bValueText;
@@ -50,8 +54,7 @@ public class UIManager : MonoBehaviour
 
         interactionCanvas.gameObject.SetActive(true);
         isUIOpen = true;
-
-
+        /*
         //Mostrando info nombre
         // objectNameText.text = "Interactuando con : " + target.objectName;
 
@@ -74,6 +77,23 @@ public class UIManager : MonoBehaviour
 
         //    }
         //Cambio de colores
+        */
+
+        //Trabajar con las texturas (Si es que las tiene)
+        bool hasTextures = currentObject.objetos != null && currentObject.objetos.Length > 0 && currentObject.objetos[currentObject.currentIndex].isTextured && currentObject.objetos[currentObject.currentIndex].availableTextures != null && currentObject.objetos[currentObject.currentIndex].availableTextures.Count>0;
+
+        //si encuentra algun panel de textura se activa el panel de texturas
+        if(textureNavigationPanel != null)
+        {
+            textureNavigationPanel.SetActive(hasTextures);
+        }
+
+        bool hasMultipleMeshes = currentObject.objetos != null && currentObject.objetos.Length > 1;
+
+        if(meshesNavigaationPanel != null)
+        {
+            meshesNavigaationPanel.SetActive(hasMultipleMeshes);
+        }
 
         if (currentObject.editableMaterials != null && currentObject.editableMaterials.Count > 0)
         {
@@ -98,6 +118,9 @@ public class UIManager : MonoBehaviour
 
         objectNameText.text = "";
         currentObject = null;
+
+        textureNavigationPanel.SetActive(false);
+        //meshesNavigaationPanel.SetActive(false);
     }
 
     public void OnSliderValueChanged(float value)
@@ -142,6 +165,8 @@ public class UIManager : MonoBehaviour
 
     public void AnteriorObjeto() => currentObject?.CambiarObjeto(-1);
 
+    public void OnNextTextureClicked() => currentObject?.NextTexture();
+    public void OnPreviousTextureClicked() => currentObject?.PreviousTexture();
 }
 
 

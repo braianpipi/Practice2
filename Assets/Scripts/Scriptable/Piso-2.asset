@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 077ef280ee625874290fba5cda933509, type: 3}
-  m_Name: sillon-1
+  m_Name: Piso-2
   m_EditorClassIdentifier: 
-  objectName: Sillon
-  prefab: {fileID: 2594135220676870862, guid: 3639c27905c01894c84ba4bf774b578c, type: 3}
+  objectName: Piso 2
+  prefab: {fileID: 9220032281452799756, guid: 1aab7c62e4ce5df468ae36bbca931ac1, type: 3}
   customMaterialsToEdit: []
-  isTextured: 0
-  texturedMaterial: {fileID: 0}
-  availableTextures: []
+  isTextured: 1
+  texturedMaterial: {fileID: 2100000, guid: aadd5a709a48466c887296bb5b1b8110, type: 2}
+  availableTextures:
+  - {fileID: 2800000, guid: f88677df267a41d6be1e7a6133e7d227, type: 3}
